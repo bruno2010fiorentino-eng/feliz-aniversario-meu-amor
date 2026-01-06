@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feliz Aniversário Meu Amor ❤️</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .timer {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .upload {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      animation: floatUp linear infinite;
+      opacity: 0.8;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 0.9; }
+      to { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+    }
+    body > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+
+  <div style="text-align:center; margin-bottom:15px;">
+    <button id="playMusic" style="padding:10px 20px; border:none; border-radius:20px; background:#ec4899; color:white; font-size:1rem; cursor:pointer;">
+      ▶️ Tocar música
+    </button>
+  </div>
+
+  <div class="hearts" id="hearts"></div>
+
+  <h1>🎉 Feliz aniversário meu amor ❤️</h1>
+
+  <div class="timer" id="timer">
+    <p style="font-size:1rem; opacity:0.8;">Tempo passando desde 22/12/2025 às 13:41</p>
+    Carregando tempo...
+  </div>
+
+  <div class="upload">
+    <input type="file" accept="image/*" multiple id="imageInput" />
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    /* ================= MÚSICA ================= */
+    let music = null;
+    const playButton = document.getElementById('playMusic');
+
+    playButton.addEventListener('click', () => {
+      if (!music) {
+        music = new Audio('consume.mp3');
+        music.loop = true;
+        music.volume = 0.7;
+        music.playsInline = true;
+      }
+
+      music.play().then(() => {
+        playButton.innerText = '🎶 Música tocando';
+        playButton.disabled = true;
+        playButton.style.opacity = '0.7';
+      }).catch((err) => {
+        alert(
+          'A música não pôde ser reproduzida.\n\n' +
+          'Confirme que:\n' +
+          '• O arquivo se chama consume.mp3\n' +
+          '• Está na mesma pasta do index.html\n' +
+          '• O site está online (GitHub Pages, Netlify, etc)'
+        );
+        console.error(err);
+      });
+    });
+
+    /* ================= CORAÇÕES ================= */
+    const heartsContainer = document.getElementById('hearts');
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerText = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = 14 + Math.random() * 26 + 'px';
+      heart.style.animationDuration = 6 + Math.random() * 6 + 's';
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 12000);
+    }
+
+    setInterval(createHeart, 400);
+
+    /* ================= CONTADOR ================= */
+    const startDate = new Date('2025-12-22T13:41:00');
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = now - startDate;
+
+      if (diff < 0) {
+        document.getElementById('timer').innerText = 'Ainda não começou';
+        return;
+      }
+
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      document.getElementById('timer').innerText =
+        `${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    /* ================= IMAGENS ================= */
+    const imageInput = document.getElementById('imageInput');
+    const gallery = document.getElementById('gallery');
+
+    imageInput.addEventListener('change', () => {
+      Array.from(imageInput.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          gallery.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+</body>
+</html>
